@@ -8,9 +8,14 @@ def build_dashboard(data):
     # Replace this entire function with your checked notebook function.
     # Copy its required imports to the top of this file.
     app = Dash(__name__)
-    app.layout = html.Div([
-        html.H1('Personal dashboard starter'),
-        html.P('Replace this placeholder with your four-figure dashboard before submitting.')
+    # The page theme lives in assets/ (theme.css and fireflies.js), which Dash
+    # loads automatically. Wrap the page in 'dash-page' and put each figure,
+    # control group, and table in its own 'dash-card'.
+    app.layout = html.Div(className='dash-page', children=[
+        html.Div(className='dash-card', children=[
+            html.H1('Personal dashboard starter'),
+            html.P('Replace this placeholder with your four-figure dashboard before submitting.')
+        ])
     ])
     return app
 
