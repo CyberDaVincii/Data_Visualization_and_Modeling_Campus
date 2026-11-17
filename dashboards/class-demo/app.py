@@ -11,42 +11,54 @@ def build_dashboard(data):
     bikes = {'Non-electric bicycle', 'E-bike'}
     colors = dict(zip(devices, ['#1f77b4', '#2ca02c', '#ff7f0e', '#9467bd']))
     app = Dash(__name__)
-    app.layout = html.Div([
-        html.H1('Children, bikes, and scooters: recorded injury patterns'),
-        html.P('2025 NEISS sample, ages 5–17. These patterns do not measure injury risk per rider.'),
-        html.Label('Patient ages — updates all figures and the table', htmlFor='ages'),
-        dcc.RangeSlider(id='ages', min=5, max=17, step=1, value=[5, 17],
-                        marks={age: str(age) for age in range(5, 18)}, allowCross=False),
-        html.Div([
-            html.Div('Power'),
-            dcc.RadioItems(id='power', options=[
-                {'label': 'All', 'value': 'all'},
-                {'label': 'Powered', 'value': 'powered'},
-                {'label': 'Unpowered', 'value': 'unpowered'}
-            ], value='all', inline=True, inputStyle={'marginRight': '6px'},
-                labelStyle={'marginRight': '20px'}),
-            html.Div('Device', style={'marginTop': '12px'}),
-            dcc.RadioItems(id='device', options=[
-                {'label': 'All', 'value': 'all'},
-                {'label': 'Bike', 'value': 'bike'},
-                {'label': 'Scooter', 'value': 'scooter'}
-            ], value='all', inline=True, inputStyle={'marginRight': '6px'},
-                labelStyle={'marginRight': '20px'}),
-            html.P('Age, power, and device selections update all figures and the table.')
-        ], style={'marginTop': '24px'}),
-        html.P(id='sample-summary'),
-        dcc.Graph(id='shares'),
-        dcc.Graph(id='ages-plot'),
-        dcc.Graph(id='care'),
-        dcc.Graph(id='care-percent'),
-        html.H2('Additional care within each device group'),
-        html.Div(id='care-table'),
-        html.P('Source: CPSC NEISS, prepared unweighted cases. No national totals or rider/trip denominators. '
-               'The additional-care category includes admission, transfer, observation, and fatalities; '
-               'False does not establish a mild outcome. 97 overlapping-device records were excluded. '
-               'Powered scooter is the source category, not exclusively electric.')
-    ], style={'fontFamily': 'Arial, sans-serif', 'backgroundColor': '#f3f5f7',
-              'color': '#202b35', 'padding': '24px', 'maxWidth': '1100px', 'margin': 'auto'})
+    # Page theme (light blue background, gold fireflies, raised white cards)
+    # lives in assets/theme.css and assets/fireflies.js, which Dash loads
+    # automatically. Every figure, control group, and table sits on its own
+    # white card so the background never sits behind the data.
+    app.layout = html.Div(className='dash-page', children=[
+        html.Div(className='dash-card', children=[
+            html.H1('Children, bikes, and scooters: recorded injury patterns', style={'marginTop': '4px'}),
+            html.P('2025 NEISS sample, ages 5–17. These patterns do not measure injury risk per rider.',
+                   style={'marginBottom': '4px'}),
+        ]),
+        html.Div(className='dash-card', children=[
+            html.Label('Patient ages — updates all figures and the table', htmlFor='ages'),
+            dcc.RangeSlider(id='ages', min=5, max=17, step=1, value=[5, 17],
+                            marks={age: str(age) for age in range(5, 18)}, allowCross=False),
+            html.Div([
+                html.Div('Power'),
+                dcc.RadioItems(id='power', options=[
+                    {'label': 'All', 'value': 'all'},
+                    {'label': 'Powered', 'value': 'powered'},
+                    {'label': 'Unpowered', 'value': 'unpowered'}
+                ], value='all', inline=True, inputStyle={'marginRight': '6px'},
+                    labelStyle={'marginRight': '20px'}),
+                html.Div('Device', style={'marginTop': '12px'}),
+                dcc.RadioItems(id='device', options=[
+                    {'label': 'All', 'value': 'all'},
+                    {'label': 'Bike', 'value': 'bike'},
+                    {'label': 'Scooter', 'value': 'scooter'}
+                ], value='all', inline=True, inputStyle={'marginRight': '6px'},
+                    labelStyle={'marginRight': '20px'}),
+                html.P('Age, power, and device selections update all figures and the table.')
+            ], style={'marginTop': '24px'}),
+            html.P(id='sample-summary', style={'fontWeight': 'bold', 'marginBottom': '4px'}),
+        ]),
+        html.Div(dcc.Graph(id='shares'), className='dash-card'),
+        html.Div(dcc.Graph(id='ages-plot'), className='dash-card'),
+        html.Div(dcc.Graph(id='care'), className='dash-card'),
+        html.Div(dcc.Graph(id='care-percent'), className='dash-card'),
+        html.Div(className='dash-card', children=[
+            html.H2('Additional care within each device group', style={'marginTop': '4px'}),
+            html.Div(id='care-table'),
+        ]),
+        html.Div(className='dash-card', children=[
+            html.P('Source: CPSC NEISS, prepared unweighted cases. No national totals or rider/trip denominators. '
+                   'The additional-care category includes admission, transfer, observation, and fatalities; '
+                   'False does not establish a mild outcome. 97 overlapping-device records were excluded. '
+                   'Powered scooter is the source category, not exclusively electric.', style={'margin': '0'})
+        ]),
+    ])
 
     @app.callback(Output('shares', 'figure'), Output('ages-plot', 'figure'),
                   Output('care', 'figure'), Output('care-percent', 'figure'), Output('care-table', 'children'),
