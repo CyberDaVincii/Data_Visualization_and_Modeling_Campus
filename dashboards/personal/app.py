@@ -260,12 +260,12 @@ def build_dashboard(data):
             return (*[empty_figure(t) for t in titles], message)
         v = compute_views(selected, start_index, end_index)
         message = (f"{len(selected)} of {len(industries)} industries selected. Survey period: {len(window)} two-week "
-                   f"cycles, {span}. Figure 3 compares the average of the first {len(v['first'])} and last "
+                   f"cycles, {span}. The change chart compares the average of the first {len(v['first'])} and last "
                    f"{len(v['last'])} cycles. Each value is the Census survey estimate of the percent of businesses "
-                   f"in that industry. Industries shown in Figure 1: {len(v['latest'])}.")
+                   f"in that industry. Industries in the current-use chart: {len(v['latest'])}.")
         if v['suppressed_end']:
             message += (' Census suppressed the last-cycle estimate for ' + ', '.join(v['suppressed_end'])
-                        + ', so it is left out of Figures 1 and 4.')
+                        + ', so it is left out of the current-use and expected-use charts.')
         return latest_figure(v), spread_figure(v), change_figure(v), outlook_figure(v), message
 
     app.compute_views = compute_views   # used by the notebook to check the dashboard values
